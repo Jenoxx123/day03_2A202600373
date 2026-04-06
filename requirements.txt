@@ -4,3 +4,21 @@ requests
 python-dotenv
 google-api-python-client
 google-auth
+
+# Web Framework & Server
+
+# HTTP Clients & Environment
+requests
+
+# Google Calendar API (Cần thêm oauthlib để xác thực)
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+
+# AI & LLM
+ollama
+
+# Utilities (Nên có)
+pydantic
+pydantic-settings
