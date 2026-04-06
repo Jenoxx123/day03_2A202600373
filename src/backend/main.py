@@ -7,7 +7,9 @@ from google.auth.exceptions import RefreshError
 import sys
 
 # Load biến môi trường từ file .env
-load_dotenv()
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 
 # Lấy các biến môi trường, dùng abs path cho service account file nếu nó là relative
 SERVICE_ACCOUNT_FILE = os.getenv('SERVICE_ACCOUNT_FILE')
@@ -112,14 +114,18 @@ def create_dual_events(service, start_time, end_time, summary="Họp đặt bở
 
 
 if __name__ == "__main__":
-    calendar_service = get_service()
+    try:
+        calendar_service = get_service()
 
-    # Nhớ chỉnh giờ test phù hợp với thời điểm hiện tại của bạn
-    test_start = "2026-04-06T15:00:00+07:00"
-    test_end = "2026-04-06T16:00:00+07:00"
+        # Nhớ chỉnh giờ test phù hợp với thời điểm hiện tại của bạn
+        test_start = "2026-04-06T15:00:00+07:00"
+        test_end = "2026-04-06T16:00:00+07:00"
 
-    if check_availability(calendar_service, test_start, test_end):
-        print("\n=> KẾT LUẬN: CẢ HAI ĐỀU RẢNH. Đang ghi lịch song song...")
-        create_dual_events(calendar_service, test_start, test_end, "Meeting: AI Agent x Backend")
-    else:
-        print("\n=> KẾT LUẬN: KHÔNG THỂ ĐẶT LỊCH DO CÓ NGƯỜI BẬN.")
+        if check_availability(calendar_service, test_start, test_end):
+            print("\n=> KẾT LUẬN: CẢ HAI ĐỀU RẢNH. Đang ghi lịch song song...")
+            create_dual_events(calendar_service, test_start, test_end, "Meeting: AI Agent x Backend")
+        else:
+            print("\n=> KẾT LUẬN: KHÔNG THỂ ĐẶT LỊCH DO CÓ NGƯỜI BẬN HOẶC LỖI XÁC THỰC.")
+    except Exception as e:
+        print(f"\n💥 LỖI HỆ THỐNG: {e}")
+        sys.exit(1)
