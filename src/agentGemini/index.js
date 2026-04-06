@@ -90,58 +90,63 @@ app.post("/api/chat", async (req, res) => {
 
     contents.push({ role: "user", parts: [{ text: message }] });
 
-    const systemPrompt = getSystemPrompt();
-    // First call: get model's intent (may include a function call)
-    const result = await ai.models.generateContent({
-      model: modelName,
-      contents,
-      config: {
-        tools: [bookingTool],
-        systemInstruction: systemPrompt,
-      },
-    });
+    const currentContents = [...contents];
+    const maxIterations = 5;
+    let iterations = 0;
 
-    // Check for function call in response
-    const candidate = result.candidates?.[0];
-    const parts = candidate?.content?.parts || [];
-    const funcCallPart = parts.find((p) => p.functionCall);
-
-    if (funcCallPart) {
-      const call = funcCallPart.functionCall;
-      console.log("🔧 Tool call:", call.name, call.args);
-
-      const toolResult = await book_meeting_impl(call.args);
-
-      // Second call: send tool result back to model for final response
-      const finalResult = await ai.models.generateContent({
+    while (iterations < maxIterations) {
+      const systemPrompt = getSystemPrompt();
+      const result = await ai.models.generateContent({
         model: modelName,
-        contents: [
-          ...contents,
-          { role: "model", parts: [{ functionCall: call }] },
-          {
-            role: "tool",
-            parts: [
-              {
-                functionResponse: {
-                  name: call.name,
-                  response: toolResult,
-                },
-              },
-            ],
-          },
-        ],
+        contents: currentContents,
         config: {
           tools: [bookingTool],
-          systemInstruction: getSystemPrompt(),
+          systemInstruction: systemPrompt,
         },
       });
 
-      return res.json({ reply: finalResult.text || "Done." });
+      const candidate = result.candidates?.[0];
+      if (!candidate) break;
+
+      const parts = candidate.content.parts || [];
+      const funcCallPart = parts.find((p) => p.functionCall);
+
+      // Add model's response to history
+      currentContents.push(candidate.content);
+
+      if (!funcCallPart) {
+        const reply = result.text || "I couldn't generate a response.";
+        return res.json({ reply });
+      }
+
+      // Handle function call
+      const call = funcCallPart.functionCall;
+      console.log(`🔧 Tool call [Iter ${iterations + 1}]:`, call.name, call.args);
+
+      const toolResult = await book_meeting_impl(call.args);
+
+      // Add tool result to history
+      currentContents.push({
+        role: "tool",
+        parts: [
+          {
+            functionResponse: {
+              name: call.name,
+              response: toolResult,
+            },
+          },
+        ],
+      });
+
+      iterations++;
     }
 
-    // No function call - plain text response
-    const reply = result.text || "I couldn't generate a response.";
-    return res.json({ reply });
+    if (iterations >= maxIterations) {
+      console.warn("⚠️ Max iterations reached.");
+      return res.json({
+        reply: "I've reached my limit of actions for this request. Please try again or simplify your request.",
+      });
+    }
   } catch (error) {
     console.error("❌ Chat Error:", error.message);
     return res.status(500).json({ error: "Agent encountered an error." });
