@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -109,9 +110,20 @@ def create_event_with_invite(service, start_time, end_time, summary, target_emai
 @app.post("/calendar/check")
 async def api_check_availability(req: BookingRequest):
     try:
+        # Validate time range
+        try:
+            start = datetime.fromisoformat(req.start_time.replace('Z', '+00:00'))
+            end = datetime.fromisoformat(req.end_time.replace('Z', '+00:00'))
+            if start >= end:
+                raise HTTPException(status_code=400, detail="start_time must be before end_time")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid ISO format for start_time or end_time")
+
         service = get_calendar_service()
         is_free = check_availability_logic(service, req.start_time, req.end_time, req.target_email)
         return {"available": is_free}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         print(f"Lỗi: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -120,11 +132,22 @@ async def api_check_availability(req: BookingRequest):
 @app.post("/calendar/book")
 async def api_book_calendar(req: BookingRequest):
     try:
+        # Validate time range
+        try:
+            start = datetime.fromisoformat(req.start_time.replace('Z', '+00:00'))
+            end = datetime.fromisoformat(req.end_time.replace('Z', '+00:00'))
+            if start >= end:
+                raise HTTPException(status_code=400, detail="start_time must be before end_time")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid ISO format for start_time or end_time")
+
         service = get_calendar_service()
         if check_availability_logic(service, req.start_time, req.end_time, req.target_email):
             result = create_event_with_invite(service, req.start_time, req.end_time, req.summary, req.target_email)
             return {"status": "success", "link": result.get('htmlLink'), "sent": True}
         return {"status": "failed", "message": "Bận rồi.", "sent": False}
+    except HTTPException as he:
+        raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
