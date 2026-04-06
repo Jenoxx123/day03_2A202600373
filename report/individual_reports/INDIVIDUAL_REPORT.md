@@ -146,8 +146,9 @@ During this lab, I learned several important practical lessons beyond just imple
   - Clear communication and accountability  
   - Setting concrete deadlines for intermediate results  
 
-**Overall Lesson**:  
+**Overall Lesson for myself**:  
 A system can fail not because of complex algorithms, but because of **small inconsistencies in data format, interface design, and team coordination**.
+
 ### 2. Reliability
 
 The ReAct agent performed **worse** than a chatbot when:
