@@ -2,11 +2,18 @@ import os
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from google.auth.exceptions import RefreshError
+import sys
 
 # Load biến môi trường từ file .env
 load_dotenv()
 
+# Lấy các biến môi trường, dùng abs path cho service account file nếu nó là relative
 SERVICE_ACCOUNT_FILE = os.getenv('SERVICE_ACCOUNT_FILE')
+if SERVICE_ACCOUNT_FILE and not os.path.isabs(SERVICE_ACCOUNT_FILE):
+    SERVICE_ACCOUNT_FILE = str(BASE_DIR / SERVICE_ACCOUNT_FILE)
+
 USER_A = os.getenv('USER_A_EMAIL')
 USER_B = os.getenv('USER_B_EMAIL')
 
@@ -16,6 +23,9 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 def get_service():
     """Khởi tạo kết nối với Google Calendar API bằng Service Account"""
+    if not SERVICE_ACCOUNT_FILE or not os.path.exists(SERVICE_ACCOUNT_FILE):
+        raise FileNotFoundError(f"Service account file not found at: {SERVICE_ACCOUNT_FILE}")
+    
     creds = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     return build('calendar', 'v3', credentials=creds)
@@ -36,18 +46,35 @@ def check_availability(service, start_time, end_time):
         "items": [{"id": USER_A}, {"id": USER_B}]
     }
 
-    res = service.freebusy().query(body=body).execute()
+    try:
+        res = service.freebusy().query(body=body).execute()
+    except RefreshError as e:
+        print(f"❌ Lỗi xác thực (Authentication Error): {e}")
+        print("Gợi ý: Kiểm tra file service_account.json (Private Key có thể đã bị thu hồi hoặc sai ID).")
+        return False
+    except HttpError as e:
+        print(f"❌ Lỗi API Google (HTTP Error): {e}")
+        return False
+    except Exception as e:
+        print(f"❌ Lỗi không xác định: {e}")
+        return False
 
     all_free = True
     for user in [USER_A, USER_B]:
-        busy_slots = res['calendars'][user]['busy']
+        user_calendar = res.get('calendars', {}).get(user, {})
+        busy_slots = user_calendar.get('busy', [])
+        
         if busy_slots:
             all_free = False
             print(f"❌ {user}: ĐANG BẬN")
             for slot in busy_slots:
                 print(f"   - Khoảng bận: {slot['start']} đến {slot['end']}")
         else:
-            print(f"✅ {user}: ĐANG RẢNH")
+            if user in res.get('calendars', {}):
+                print(f"✅ {user}: ĐANG RẢNH")
+            else:
+                print(f"⚠️ {user}: Không tìm thấy thông tin (Có thể chưa chia sẻ lịch với Service Account)")
+                all_free = False
 
     return all_free
 
