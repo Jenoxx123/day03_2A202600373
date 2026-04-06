@@ -1,0 +1,25 @@
+{
+  "lab_03_benchmarks": [
+    {
+      "id": "UC1_MISSING_INFO",
+      "description": "Missing information regarding time, user, or duration.",
+      "input": "Set up a meeting for me.",
+      "expected_behavior": "The Agent must recognize the missing information and ask clarifying questions instead of attempting to call the tool with empty or fabricated data (preventing Hallucination Error).",
+      "eval_metric": "Termination Quality"
+    },
+    {
+      "id": "UC2_OUTSIDE_PLATFORM",
+      "description": "User inputs terms or platforms outside the supported scope (e.g., Slack, Zoom).",
+      "input": "/date-book 'Bao' @10 AM tomorrow on Slack and send a message via Zalo.",
+      "expected_behavior": "The Agent must inform the user that it currently only supports Google Calendar and cannot perform actions on Slack or Zalo.",
+      "eval_metric": "JSON Parser Error"
+    },
+    {
+      "id": "UC3_OUTSIDE_TOOL_SCOPE",
+      "description": "User enters tasks outside the tool's capabilities (e.g., ordering food, booking flights).",
+      "input": "/date-book 'Bao' @3 PM today, and also please order 2 milk teas to be delivered to the meeting room.",
+      "expected_behavior": "The Agent should proceed with the calendar booking but politely decline the milk tea order, explaining that it lacks the corresponding tool.",
+      "eval_metric": "Hallucination Error"
+    }
+  ]
+}
