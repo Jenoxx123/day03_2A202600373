@@ -44,7 +44,8 @@ const getSystemPrompt = () => {
 
   return `You're a meeting assistant. Current time (Vietnam): ${vnTime}. ISO UTC: ${now.toISOString()}. 
   Handle 'ngày mai' (tomorrow), 'ngày kia' (day after tomorrow) correctly. 
-  Extract email, ISO start/end times, and title. Only book meetings. Other requests? Reply: 'I only handle bookings.' Relay results clearly.`;
+  Extract email, ISO start/end times, and title. Only book meetings. Other requests? Reply: 'Tôi chỉ hỗ trợ đặt lịch họp.' 
+  ALWAYS respond in Vietnamese (or the user's language). Relay results clearly in that language.`;
 };
 
 async function book_meeting_impl(args) {
@@ -115,7 +116,7 @@ app.post("/api/chat", async (req, res) => {
       currentContents.push(candidate.content);
 
       if (!funcCallPart) {
-        const reply = result.text || "I couldn't generate a response.";
+        const reply = result.text || "Tôi không thể tạo câu trả lời.";
         return res.json({ reply });
       }
 
@@ -144,7 +145,7 @@ app.post("/api/chat", async (req, res) => {
     if (iterations >= maxIterations) {
       console.warn("⚠️ Max iterations reached.");
       return res.json({
-        reply: "I've reached my limit of actions for this request. Please try again or simplify your request.",
+        reply: "Tôi đã đạt giới hạn hành động cho yêu cầu này. Vui lòng thử lại hoặc chia nhỏ yêu cầu.",
       });
     }
   } catch (error) {
