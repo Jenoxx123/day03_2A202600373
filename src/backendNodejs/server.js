@@ -300,7 +300,13 @@ app.post("/book-meeting", async (req, res) => {
 // ==========================================
 // 6. Start Server
 // ==========================================
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📄 Documentation available at http://localhost:${PORT}/api-docs`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(
+      `📄 Documentation available at http://localhost:${PORT}/api-docs`,
+    );
+  });
+}
+
+module.exports = app;
