@@ -8,7 +8,7 @@ from typing import List, Optional
 # --- Config ---
 PORT = int(os.getenv("PORT", 3001))
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:latest")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ollama3:1b")
 
 # --- App ---
 app = FastAPI()
