@@ -6,3 +6,13 @@
 {"timestamp": "2026-04-06T08:11:33.669811", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_END", "data": {"steps": 1, "status": "success", "answer": "I have scheduled a meeting with John for 1 hour."}}
 {"timestamp": "2026-04-06T08:36:00.224735", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_START", "data": {"input": "\u0110\u1eb7t cho t\u00f4i c\u00e1i l\u1ecbch h\u1ecdp v\u1edbi.", "model": "gemma3:1b"}}
 {"timestamp": "2026-04-06T08:36:00.224735", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_STEP", "data": {"step": 1, "max_steps": 5}}
+{"timestamp": "2026-04-06T08:37:05.965695", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_START", "data": {"input": "\u0110\u1eb7t cho t\u00f4i c\u00e1i l\u1ecbch h\u1ecdp v\u1edbi.", "model": "gemma3:1b"}}
+{"timestamp": "2026-04-06T08:37:05.965695", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_STEP", "data": {"step": 1, "max_steps": 5}}
+{"timestamp": "2026-04-06T08:40:50.284457", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_START", "data": {"input": "Set up a meeting for me.", "model": "gemma3:1b"}}
+{"timestamp": "2026-04-06T08:40:50.285081", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_STEP", "data": {"step": 1, "max_steps": 5}}
+{"timestamp": "2026-04-06T08:48:15.367400", "level": "INFO", "service": "AI-Lab-Agent", "message": "TOOL_EXECUTED", "data": {"tool": "book_calendar_event", "args": "Title: Meeting with, YYYY-MM-DDTHH:MM:SS+07:00 | YYYY-MM-DDTHH:MM:SS+07:00 | Location", "observation": "L\u1ed7i khi g\u1ecdi Google Calendar API: 'str' object has no attribute 'valid'"}}
+{"timestamp": "2026-04-06T08:48:15.367400", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_STEP", "data": {"step": 2, "max_steps": 5}}
+{"timestamp": "2026-04-06T08:48:29.566532", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_WARNING", "data": {"warning": "LLM violated format constraints"}}
+{"timestamp": "2026-04-06T08:48:29.566532", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_STEP", "data": {"step": 3, "max_steps": 5}}
+{"timestamp": "2026-04-06T08:48:44.107636", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_WARNING", "data": {"warning": "LLM violated format constraints"}}
+{"timestamp": "2026-04-06T08:48:44.107636", "level": "INFO", "service": "AI-Lab-Agent", "message": "AGENT_STEP", "data": {"step": 4, "max_steps": 5}}
