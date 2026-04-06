@@ -32,7 +32,7 @@ function ChatbotInterface({ messages, onSendMessage, isLoading }) {
   return (
     <div className="chatbot-container">
       <div className="chatbot-header">
-        <h1 className="chatbot-title">Calendar Booking Agent</h1>
+        <h1 className="chatbot-title">🗓️ Calendar Booking Agent</h1>
       </div>
       <div className="messages-wrapper">
         <div className="messages-list">
@@ -63,7 +63,7 @@ function ChatbotInterface({ messages, onSendMessage, isLoading }) {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-          placeholder="Who would you like to invite?"
+          placeholder="Ví dụ: Đặt lịch họp với abc@gmail.com lúc 10h sáng ngày 10/4/2025..."
           className="chat-input"
           rows="2"
         />

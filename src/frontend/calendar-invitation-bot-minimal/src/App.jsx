@@ -7,7 +7,7 @@ function App() {
     {
       id: 1,
       type: 'bot',
-      text: "Good morning. I can help you send meeting invitations. What's on your mind?",
+      text: "👋 Xin chào! Tôi là trợ lý đặt lịch họp của bạn. Hãy cho tôi biết bạn muốn đặt lịch với ai, vào thời gian nào nhé!",
     }
   ]);
 
@@ -56,7 +56,7 @@ function App() {
       const botResponse = {
         id: Date.now() + 1,
         type: 'bot',
-        text: `Sorry, I ran into an error talking to the backend. ${error?.message || ''}`.trim(),
+        text: `Xin lỗi, tôi gặp sự cố khi xử lý yêu cầu của bạn. ${error?.message || 'Vui lòng thử lại sau.'}`.trim(),
       };
       setMessages(prev => [...prev, botResponse]);
     } finally {
